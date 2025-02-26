@@ -13,21 +13,22 @@
 
     <script>
         function schalteShelly(status) {
-            // Erstelle die Daten für die Anfrage
-            let data = new URLSearchParams();
-            data.append("id", "e465b85d8cd8");
-            data.append("turn", status ? "on" : "off");
-            data.append("channel", "0");
-            data.append("auth_key", "MmU4OTRmdWlk4A4D429C1AEBBB620E5AA56C8C7E4BE74451AEA01AF818193E6B1FDBB5535AEE6C59824916283299");
+            const myHeaders = new Headers();
+            myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
 
-            fetch("https://shelly-165-eu.shelly.cloud/device/relay/control/", {
+            const raw = `id=e465b85d8cd8&turn=${status ? "on" : "off"}&channel=0&auth_key=MmU4OTRmdWlk4A4D429C1AEBBB620E5AA56C8C7E4BE74451AEA01AF818193E6B1FDBB5535AEE6C59824916283299`;
+
+            const requestOptions = {
                 method: "POST",
-                headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                body: data.toString()
-            })
-            .then(response => response.json())
-            .then(data => alert("Shelly Antwort: " + JSON.stringify(data)))
-            .catch(error => alert("Fehler: " + error));
+                headers: myHeaders,
+                body: raw,
+                redirect: "follow"
+            };
+
+            fetch("https://shelly-165-eu.shelly.cloud/device/relay/control/", requestOptions)
+                .then((response) => response.json()) // JSON konvertieren
+                .then((data) => alert("Shelly Antwort: " + JSON.stringify(data))) // Antwort anzeigen
+                .catch((error) => alert("Fehler: " + error));
         }
     </script>
 
