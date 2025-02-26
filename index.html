@@ -13,7 +13,7 @@
 
     <script>
         function schalteShelly(status) {
-            fetch("https://shelly-165-eu.shelly.cloud/jsonrpc/device", {
+            fetch("https://shelly-165-eu.shelly.cloud/device/relay/control/", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
