@@ -1,25 +1,41 @@
 <!DOCTYPE html>
 <html lang="de">
-<head><meta charset="UTF-8"><title>Shelly Plug Steuerung</title></head>
+<head>
+  <meta charset="UTF-8">
+  <title>Shelly Plug S Cloud Steuerung</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }
+    button { padding: 10px 20px; margin: 10px; font-size: 16px; cursor: pointer; }
+  </style>
+</head>
 <body>
-    <h3>Shelly Cloud Plug Steuerung</h3>
-    <button onclick="schalte(true)">Einschalten</button>
-    <button onclick="schalte(false)">Ausschalten</button>
+  <h1>Shelly Plug S Cloud Steuerung</h1>
+  <button onclick="schalte(true)">Einschalten</button>
+  <button onclick="schalte(false)">Ausschalten</button>
+  <p id="antwort">Status: -</p>
 
-    <script>
-        const DEVICE_ID = "e465b85d8cd8"; // Deine Device-ID aus der Shelly-Cloud
-        const API_TOKEN = "MmU4OTRmdWlk4A4D429C1AEBBB620E5AA56C8C7E4BE74451AEA01AF818193E6B1FDBB5535AEE6C59824916283299"; // Dein API-Token
+  <script>
+    // Deine Zugangsdaten (API Key, Device ID und Server)
+    const API_TOKEN = "MmU4OTRmdWlk4A4D429C1AEBBB620E5AA56C8C7E4BE74451AEA01AF818193E6B1FDBB5535AEE6C59824916283299";
+    const DEVICE_ID = "e465b85d8cd8";
+    const SERVER = "https://shelly-165-eu.shelly.cloud"; // Dein Shelly Cloud Server
 
-        async function schalte(ein) {
-            let url = `https://api.shelly.cloud/device/relay/control?auth_key=${API_TOKEN}&id=${DEVICE_ID}&turn=${ein ? "on" : "off"}`;
-            try {
-                let response = await fetch(url);
-                let data = await response.json();
-                console.log("Antwort:", data);
-            } catch (error) {
-                console.error("Fehler:", error);
-            }
-        }
-    </script>
+    // Verwende den 'switch'-Endpoint. Falls das nicht funktioniert, versuche "relay"
+    const endpoint = "switch";
+
+    async function schalte(ein) {
+      // Erstelle die URL: turn=on für Einschalten, turn=off für Ausschalten
+      const url = `${SERVER}/device/${endpoint}/control?auth_key=${API_TOKEN}&id=${DEVICE_ID}&turn=${ein ? "on" : "off"}`;
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+        document.getElementById("antwort").innerText = "Antwort: " + JSON.stringify(data);
+        console.log("Antwort:", data);
+      } catch (error) {
+        document.getElementById("antwort").innerText = "Fehler: " + error;
+        console.error("Fehler:", error);
+      }
+    }
+  </script>
 </body>
 </html>
