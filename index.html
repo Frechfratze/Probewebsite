@@ -1,41 +1,35 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <title>Shelly Plug S Cloud Steuerung</title>
-  <style>
-    body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }
-    button { padding: 10px 20px; margin: 10px; font-size: 16px; cursor: pointer; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shelly Plug Steuerung</title>
 </head>
 <body>
-  <h1>Shelly Plug S Cloud Steuerung</h1>
-  <button onclick="schalte(true)">Einschalten</button>
-  <button onclick="schalte(false)">Ausschalten</button>
-  <p id="antwort">Status: -</p>
 
-  <script>
-    // Deine Zugangsdaten (API Key, Device ID und Server)
-    const API_TOKEN = "MmU4OTRmdWlk4A4D429C1AEBBB620E5AA56C8C7E4BE74451AEA01AF818193E6B1FDBB5535AEE6C59824916283299";
-    const DEVICE_ID = "e465b85d8cd8";
-    const SERVER = "https://shelly-165-eu.shelly.cloud"; // Dein Shelly Cloud Server
+    <h2>Shelly Plug Steuerung</h2>
+    <button onclick="schalteShelly(true)">🔌 Einschalten</button>
+    <button onclick="schalteShelly(false)">🔌 Ausschalten</button>
 
-    // Verwende den 'switch'-Endpoint. Falls das nicht funktioniert, versuche "relay"
-    const endpoint = "switch";
+    <script>
+        function schalteShelly(status) {
+            fetch("https://shelly-165-eu.shelly.cloud/jsonrpc/device", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    "jsonrpc": "2.0",
+                    "id": 1,
+                    "method": "Switch.Set",
+                    "params": { "id": 0, "on": status },
+                    "auth_key": "MmU4OTRmdWlk4A4D429C1AEBBB620E5AA56C8C7E4BE74451AEA01AF818193E6B1FDBB5535AEE6C59824916283299",
+                    "device_id": "e465b85d8cd8"
+                })
+            })
+            .then(response => response.json())
+            .then(data => alert("Shelly Antwort: " + JSON.stringify(data)))
+            .catch(error => alert("Fehler: " + error));
+        }
+    </script>
 
-    async function schalte(ein) {
-      // Erstelle die URL: turn=on für Einschalten, turn=off für Ausschalten
-      const url = `${SERVER}/device/${endpoint}/control?auth_key=${API_TOKEN}&id=${DEVICE_ID}&turn=${ein ? "on" : "off"}`;
-      try {
-        const response = await fetch(url);
-        const data = await response.json();
-        document.getElementById("antwort").innerText = "Antwort: " + JSON.stringify(data);
-        console.log("Antwort:", data);
-      } catch (error) {
-        document.getElementById("antwort").innerText = "Fehler: " + error;
-        console.error("Fehler:", error);
-      }
-    }
-  </script>
 </body>
 </html>
