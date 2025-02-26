@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="de">
+<head><meta charset="UTF-8"><title>Shelly Plug S Steuerung</title></head>
+<body>
+  <h3>Plug S Steuerung</h3>
+  <div>Status: <span id="status">unbekannt</span></div>
+  <button onclick="schalte(true)">Einschalten</button>
+  <button onclick="schalte(false)">Ausschalten</button>
+
+  <script>
+    let socket = new WebSocket("ws://192.168.1.100/rpc");  // Shelly-IP anpassen
+    socket.onopen = () => {
+      socket.send('{"id":1, "src":"browser_ui", "method":"Shelly.GetStatus"}');
+    };
+    socket.onmessage = (event) => {
+      const obj = JSON.parse(event.data);
+      // Status-Antwort oder Notification prüfen:
+      let zustand = null;
+      if (obj.result && obj.result["switch:0"]) {
+        zustand = obj.result["switch:0"].output;
+      } else if (obj.params && obj.params["switch:0"]) {
+        zustand = obj.params["switch:0"].output;
+      }
+      if (zustand !== null) {
+        document.getElementById("status").textContent = zustand ? "AN" : "AUS";
+      }
+    };
+    function schalte(ein) {
+      socket.send(`{"id":2, "method":"Switch.Set","params":{"id":0,"on":${ein}}}`);
+    }
+  </script>
+</body>
+</html>
