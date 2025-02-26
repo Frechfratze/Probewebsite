@@ -8,7 +8,7 @@
   <button onclick="schalte(false)">Ausschalten</button>
 
   <script>
-    let socket = new WebSocket("ws://192.168.1.100/rpc");  // Shelly-IP anpassen
+    let socket = new WebSocket("ws://192.168.68.116/rpc");  // Shelly-IP anpassen
     socket.onopen = () => {
       socket.send('{"id":1, "src":"browser_ui", "method":"Shelly.GetStatus"}');
     };
